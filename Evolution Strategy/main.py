@@ -1,30 +1,59 @@
+from utils import mutate_population
+import utils
 import numpy as np
 import random
-import utils
 
-
-# Definicja funkcji celu
 def objective_function(x, y):
-    return 9 * x * y / np.exp(x ** 2 + 0.5 * x + y ** 2)
+    if(abs(x) < 15 and abs(y) < 15):
+        return 9 * x * y / np.exp(x ** 2 + 0.5 * x + y ** 2)
+    else:
+        return 0.09
+
+mu = 10
+lambda_ = 60
+num_generations = 100
+mutation_sigma = 0.1
+bounds = [(0, 2, 0, 2), (-2, 0, 0, 2), (-2, 0, -2, 0), (0, 2, -2, 0)]
+
+best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, mutation_sigma, bounds, -1)
+for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_individuals_fitness), 1):
+    print(f"Minimum {i}: {best_individual}   with value: {best_fitness}")
+
+best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, mutation_sigma, bounds, 1)
+for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_individuals_fitness), 1):
+    print(f"Maksimum {i}: {best_individual}   with value: {best_fitness}")
+
+#mutation sigma = 0.001 01 1 10
+# mutation_sigma_list = [0.001, 0.1, 1, 10]
+# mutated_population_pos=[]
+# mutated_population_value=[]
+# mutated_population = []
+# for sigma in mutation_sigma_list:
+#     best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, sigma, bounds, -1)
+#     mutated_population_pos.append(best_individuals)
+#     mutated_population_value.append(best_individuals_fitness)
 
 
 
-# Parametry algorytmu
-mi = 10  # Rozmiar populacji rodzicielskiej
-lambda_ = 50  # Rozmiar populacji potomnej
-population_size = mi + lambda_  # Całkowita liczba osobników
-num_generations = 50  # Liczba generacji
-mutation_sigma = 0.1  # Odchylenie standardowe mutacji
-side_length = 2
+# # mu, lambda = 1,1    1,16    16,1   16,16   128,512
+# mu_and_lambda = [(1,1), (1,16), (16,1), (16,16), (128,512)]
+# mu_and_lambda_population = []
+# mu_and_lambda_population_value = []
+# for new_mu, new_lambda in mu_and_lambda:
+#     best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, new_mu, new_lambda, num_generations, mutation_sigma, bounds, -1)
+#     mu_and_lambda_population.append(best_individuals)
+#     mu_and_lambda_population_value.append(best_individuals_fitness)
 
-# Uruchomienie algorytmu ewolucyjnego
-# best_individual, best_fitness = utils.evolutionary_strategy(objective_function, mi, lambda_, population_size, side_length, num_generations, mutation_sigma)
+mu = 128
+lambda_ = 512
+num_generations = 1000
+mutation_sigma = 0.1
 
-best_individual, best_fitness = utils.execute_strategy(objective_function, mi, lambda_, population_size, side_length, num_generations, mutation_sigma)
+bounds = [(5, 5, 5, 5)]
+best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, mutation_sigma, bounds, -1)
+for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_individuals_fitness), 1):
+    print(f"Minimum {i}: {best_individual}   with value: {best_fitness}")
 
-print("Najlepsze rozwiązanie:", best_individual)
-print("Wartość funkcji celu dla najlepszego rozwiązania:", best_fitness)
+#print(mu_and_lambda_population_value)
 
-# print(initialize_population(population_size))
-# [np.random.uniform(-5, 5, size=2) for _ in range(population_size)]
-# print([np.random.uniform(-3, 3, size=2) for _ in range(2)])
+# dla mu, lambda = 128,512, sigma=1 ustawic punkt na 10,10
