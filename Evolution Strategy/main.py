@@ -3,6 +3,9 @@ import utils
 import numpy as np
 import random
 
+local_maxima = np.array([[0.59307, 0.707107, 1.19715],[-0.84307, -0.707107, 2.43687]])
+local_minima = np.array([[0.59307, -0.707107, -1.19715],[-0.84307, 0.707107, -2.43687]])
+
 def objective_function(x, y):
     if(abs(x) < 15 and abs(y) < 15):
         return 9 * x * y / np.exp(x ** 2 + 0.5 * x + y ** 2)
@@ -48,11 +51,29 @@ mu = 128
 lambda_ = 512
 num_generations = 1000
 mutation_sigma = 3
+err = np.zeros((2,3))
+sum_ = np.zeros(2)
 
 bounds = [(10, 10, 10, 10)]
 best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, mutation_sigma, bounds, -1)
 for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_individuals_fitness), 1):
     print(f"Minimum {i}: {best_individual}   with value: {best_fitness}")
+    for j in range(2):
+        err[j][0] += best_individual[0] - local_minima[j][0]
+        err[j][1] += best_individual[1] - local_minima[j][1]
+        err[j][2] += best_fitness - local_minima[j][2]
+        sum_[j] = sum(abs(err[j][k]) for k in range(3))
+    if len(err) > 0:  # Sprawdzenie, czy tablica err nie jest pusta
+        choice = int(sum_[0] > sum_[1])
+        print(f"Error x = {err[choice][0]}   y = {err[choice][1]}   z = {err[choice][2]}")
+    else:
+        print("Err is empty.")
+
+    
+    
+
+
+
 
 #print(mu_and_lambda_population_value)
 
