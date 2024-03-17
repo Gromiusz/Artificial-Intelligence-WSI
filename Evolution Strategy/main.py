@@ -15,13 +15,13 @@ num_generations = 100
 mutation_sigma = 0.1
 bounds = [(0, 2, 0, 2), (-2, 0, 0, 2), (-2, 0, -2, 0), (0, 2, -2, 0)]
 
-best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, mutation_sigma, bounds, -1)
-for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_individuals_fitness), 1):
-    print(f"Minimum {i}: {best_individual}   with value: {best_fitness}")
+# best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, mutation_sigma, bounds, -1)
+# for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_individuals_fitness), 1):
+#     print(f"Minimum {i}: {best_individual}   with value: {best_fitness}")
 
-best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, mutation_sigma, bounds, 1)
-for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_individuals_fitness), 1):
-    print(f"Maksimum {i}: {best_individual}   with value: {best_fitness}")
+# best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, mutation_sigma, bounds, 1)
+# for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_individuals_fitness), 1):
+#     print(f"Maksimum {i}: {best_individual}   with value: {best_fitness}")
 
 #mutation sigma = 0.001 01 1 10
 # mutation_sigma_list = [0.001, 0.1, 1, 10]
@@ -47,9 +47,9 @@ for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_i
 mu = 128
 lambda_ = 512
 num_generations = 1000
-mutation_sigma = 0.1
+mutation_sigma = 3
 
-bounds = [(5, 5, 5, 5)]
+bounds = [(10, 10, 10, 10)]
 best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, mutation_sigma, bounds, -1)
 for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_individuals_fitness), 1):
     print(f"Minimum {i}: {best_individual}   with value: {best_fitness}")
