@@ -117,3 +117,19 @@ def execute_strategy(objective_function, mi, lambda_, num_generations, mutation_
     best_individuals_value_filtered = [val for val in best_individuals_value if abs(val) > 1e-1]
     
     return best_individuals_filtered, best_individuals_value_filtered
+
+def print_results(best_individuals, best_individuals_fitness, what, local_what):
+    for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_individuals_fitness), 1):
+        sum_ = np.zeros(2)
+        err = np.zeros((2,3))
+        print(f"{what} {i}: {best_individual}   with value: {best_fitness}")
+        for j in range(2):
+            err[j][0] += best_individual[0] - local_what[j][0]
+            err[j][1] += best_individual[1] - local_what[j][1]
+            err[j][2] += best_fitness - local_what[j][2]
+            sum_[j] = sum(abs(err[j][k]) for k in range(3))
+        if len(err) > 0:  # Sprawdzenie, czy tablica err nie jest pusta
+            choice = int(sum_[0] > sum_[1])
+            print(f"Error x = {err[choice][0]}   y = {err[choice][1]}   z = {err[choice][2]}")
+        else:
+            print("Err array is empty.")
