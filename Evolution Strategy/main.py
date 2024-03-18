@@ -28,6 +28,8 @@ utils.print_results(best_individuals, best_individuals_fitness, "Maksimum", loca
 # for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_individuals_fitness), 1):
 #     print(f"Maksimum {i}: {best_individual}   with value: {best_fitness}")
 
+bounds = [(-3, 3, -3, 3)]
+print("\n")
 # mutation sigma = 0.001 01 1 10
 mutation_sigma_list = [0.001, 0.1, 1, 10]
 mutated_population_pos=[]
@@ -37,9 +39,13 @@ for sigma in mutation_sigma_list:
     best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, sigma, bounds, -1)
     mutated_population_pos.append(best_individuals)
     mutated_population_value.append(best_individuals_fitness)
+    print(f"\nResults for sigma = {sigma}:")
+    utils.print_results(best_individuals, best_individuals_fitness, "Minimum", local_minima)
 
 
 
+
+print("\n")
 # mu, lambda = 1,1    1,16    16,1   16,16   128,512
 mu_and_lambda = [(1,1), (1,16), (16,1), (16,16), (128,512)]
 mu_and_lambda_population = []
@@ -48,13 +54,18 @@ for new_mu, new_lambda in mu_and_lambda:
     best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, new_mu, new_lambda, num_generations, mutation_sigma, bounds, -1)
     mu_and_lambda_population.append(best_individuals)
     mu_and_lambda_population_value.append(best_individuals_fitness)
+    print(f"\nResults for mu = {new_mu} and lambda = {new_lambda}:")
+    utils.print_results(best_individuals, best_individuals_fitness, "Minimum", local_minima)
 
+
+print("\n\n")
 mu = 128
 lambda_ = 512
 num_generations = 1000
 mutation_sigma = 3
 err = np.zeros((2,3))
 sum_ = np.zeros(2)
+
 
 bounds = [(10, 10, 10, 10)]
 best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, mutation_sigma, bounds, -1)
