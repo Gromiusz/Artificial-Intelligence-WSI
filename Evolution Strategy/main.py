@@ -35,12 +35,13 @@ mutation_sigma_list = [0.001, 0.1, 1, 10]
 mutated_population_pos=[]
 mutated_population_value=[]
 mutated_population = []
+errors_mut = []
 for sigma in mutation_sigma_list:
     best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, sigma, bounds, -1)
     mutated_population_pos.append(best_individuals)
     mutated_population_value.append(best_individuals_fitness)
     print(f"\nResults for sigma = {sigma}:")
-    utils.print_results(best_individuals, best_individuals_fitness, "Minimum", local_minima)
+    errors_mut.append(utils.print_results(best_individuals, best_individuals_fitness, "Minimum", local_minima))
 
 
 
@@ -50,12 +51,13 @@ print("\n")
 mu_and_lambda = [(1,1), (1,16), (16,1), (16,16), (128,512)]
 mu_and_lambda_population = []
 mu_and_lambda_population_value = []
+errors_mu_lam = []
 for new_mu, new_lambda in mu_and_lambda:
     best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, new_mu, new_lambda, num_generations, mutation_sigma, bounds, -1)
     mu_and_lambda_population.append(best_individuals)
     mu_and_lambda_population_value.append(best_individuals_fitness)
     print(f"\nResults for mu = {new_mu} and lambda = {new_lambda}:")
-    utils.print_results(best_individuals, best_individuals_fitness, "Minimum", local_minima)
+    errors_mu_lam.append(utils.print_results(best_individuals, best_individuals_fitness, "Minimum", local_minima))
 
 
 print("\n\n")
