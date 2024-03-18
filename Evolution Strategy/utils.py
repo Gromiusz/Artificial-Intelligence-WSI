@@ -1,6 +1,8 @@
 import numpy as np
 import random
 import math
+import matplotlib.pyplot as plt
+import os
 
 def initialize_population(population_size, bounds):
     return np.random.uniform(low=(bounds[0], bounds[2]), high=(bounds[1], bounds[3]), size=(population_size, 2))
@@ -71,11 +73,11 @@ def evolutionary_strategy2(objective_function, mi, lambda_, num_generations, mut
     population_size = mi
     population = initialize_population(population_size, bounds)
     
-    for i in range(num_generations): # symulacja zycia populacji
+    for ii in range(num_generations): # symulacja zycia populacji
         # mutacja
-        if i>900:
+        if ii>900:
             mutation_sigma=0.1
-            if i>980:
+            if ii>980:
                 mutation_sigma=0.05
                 
         new_generation = mutate_population(population, mutation_sigma)
@@ -117,8 +119,10 @@ def execute_strategy(objective_function, mi, lambda_, num_generations, mutation_
     best_individuals_value_filtered = [val for val in best_individuals_value if abs(val) > 1e-1]
     
     return best_individuals_filtered, best_individuals_value_filtered
+    # return best_individuals, best_individuals_value
 
-def print_results(best_individuals, best_individuals_fitness, what, local_what):
+def print_results(best_individuals, best_individuals_fitness, what: str, local_what):
+    errors = []
     for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_individuals_fitness), 1):
         sum_ = np.zeros(2)
         err = np.zeros((2,3))
@@ -131,5 +135,25 @@ def print_results(best_individuals, best_individuals_fitness, what, local_what):
         if len(err) > 0:  # Sprawdzenie, czy tablica err nie jest pusta
             choice = int(sum_[0] > sum_[1])
             print(f"Error x = {err[choice][0]}   y = {err[choice][1]}   z = {err[choice][2]}")
+            errors.append(err[choice])
         else:
             print("Err array is empty.")
+    return errors
+
+# def plot_compare_errors(arguments, errors, title: str, var_str: str):
+#     plt.clf()
+#     err_to_plot = errors[:][2]
+#     # err_to_plot = [err[2] for err in errors]  # Wybierz trzecią wartość z każdego błędu
+#     if len(err_to_plot) == 3 and len(arguments) > 3:
+#         arguments = arguments[:3]  # Jeśli err_to_plot ma rozmiar 3, zmniejsz arguments do 3
+#     plt.plot(arguments, err_to_plot)
+#     plt.xlabel(var_str)
+#     plt.ylabel('Wartość błędu')
+#     plt.title(title)
+#     # plt.ylim(0, 50)
+#     script_dir = os.path.dirname(__file__)
+#     results_dir = os.path.join(script_dir, 'results/')
+#     file_name = f"{title.replace(' ', '_')}.png"
+#     if not os.path.isdir(results_dir):
+#         os.makedirs(results_dir)
+#     plt.savefig(os.path.join(results_dir, file_name))

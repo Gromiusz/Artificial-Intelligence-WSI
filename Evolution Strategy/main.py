@@ -43,6 +43,7 @@ for sigma in mutation_sigma_list:
     print(f"\nResults for sigma = {sigma}:")
     errors_mut.append(utils.print_results(best_individuals, best_individuals_fitness, "Minimum", local_minima))
 
+# utils.plot_compare_errors(mutation_sigma_list, errors_mut, "Błąd w zależności od mutacji", "sigma")
 
 
 
