@@ -21,10 +21,10 @@ def calculate_function_value(objective_function, population):
 def select_best_individuals(population, population_values, num_best):
 # strategia selekcji to wybranie osobników z najmniejszą wartością funkcji
     sorted_indices = np.argsort(population_values)
-    return [population[i] for i in sorted_indices[:(num_best-5)]]
+    return [population[i] for i in sorted_indices[:num_best]]
 
-def select_half_best_individuals(population, population_values, num_best):
-# strategia selekcji to wybranie osobników z najmniejszą wartością funkcji
+def select_not_only_best_individuals(population, population_values, num_best):
+# strategia selekcji to wybranie osobników równiez gorszych jakościowo
     sorted_indices = np.argsort(population_values)
     half_num_lowest = math.ceil(num_best/10)
     best_indices = sorted_indices[:half_num_lowest]
@@ -42,44 +42,13 @@ def evolutionary_strategy(objective_function, mi, lambda_, num_generations, muta
     population_size = mi
     population = initialize_population(population_size, bounds)
     
-    for _ in range(num_generations): # symulacja zycia populacji
-        # mutacja
-        new_generation = mutate_population(population, mutation_sigma)
-        new_generation_value = calculate_function_value(objective_function, new_generation)
-
-        for _ in range(lambda_):
-            #krzyowanie
-            parent1, parent2 = random.choices(new_generation, k=2)
-            child = interpolation_crossover(parent1, parent2)
-            new_generation = np.vstack([new_generation, child])
-            new_generation_value.append(objective_function(*child))
-        
-        # wybór najmniejszych osobników lub największych w zalezności od wartości flagi
-        if flags==-1:
-            population = select_best_individuals(new_generation, new_generation_value, mi)
-        elif flags==1:
-            population = select_best_individuals_descending(new_generation, new_generation_value, mi)
-    
-    #wybór jednego najlepszego osobnika końcowego
-    if flags==-1:
-        best_individual = min(population, key=lambda x: objective_function(*x))
-    if flags==1:
-        best_individual = max(population, key=lambda x: objective_function(*x))
-
-    best_value = objective_function(*best_individual)
-    return best_individual, best_value
-
-def evolutionary_strategy2(objective_function, mi, lambda_, num_generations, mutation_sigma, bounds, flags):
-    population_size = mi
-    population = initialize_population(population_size, bounds)
-    
-    for ii in range(num_generations): # symulacja zycia populacji
-        # mutacja
+    for ii in range(num_generations):
         if ii>900:
             mutation_sigma=0.1
             if ii>980:
                 mutation_sigma=0.05
-                
+        
+        #mutacja
         new_generation = mutate_population(population, mutation_sigma)
         new_generation_value = calculate_function_value(objective_function, new_generation)
 
@@ -91,13 +60,15 @@ def evolutionary_strategy2(objective_function, mi, lambda_, num_generations, mut
             new_generation_value.append(objective_function(*child))
         
         # wybór najmniejszych osobników lub największych w zalezności od wartości flagi
-        if flags==-1:
-            population = select_half_best_individuals(new_generation, new_generation_value, mi)
+        if flags==-2:
+            population = select_not_only_best_individuals(new_generation, new_generation_value, mi)
         elif flags==1:
             population = select_best_individuals_descending(new_generation, new_generation_value, mi)
+        elif flags==-1:
+            population = select_best_individuals(new_generation, new_generation_value, mi)
     
     #wybór jednego najlepszego osobnika końcowego
-    if flags==-1:
+    if flags==-1 or flags==-2:
         best_individual = min(population, key=lambda x: objective_function(*x))
     if flags==1:
         best_individual = max(population, key=lambda x: objective_function(*x))
@@ -111,7 +82,7 @@ def execute_strategy(objective_function, mi, lambda_, num_generations, mutation_
     best_individuals_value = []
     
     for bound in bounds:
-        best_individual, best_value = evolutionary_strategy2(objective_function, mi, lambda_, num_generations, mutation_sigma, bound, flags)
+        best_individual, best_value = evolutionary_strategy(objective_function, mi, lambda_, num_generations, mutation_sigma, bound, flags)
         best_individuals.append(best_individual)
         best_individuals_value.append(best_value)
     
@@ -132,28 +103,10 @@ def print_results(best_individuals, best_individuals_fitness, what: str, local_w
             err[j][1] += best_individual[1] - local_what[j][1]
             err[j][2] += best_fitness - local_what[j][2]
             sum_[j] = sum(abs(err[j][k]) for k in range(3))
-        if len(err) > 0:  # Sprawdzenie, czy tablica err nie jest pusta
+        if len(err) > 0:
             choice = int(sum_[0] > sum_[1])
             print(f"Error x = {err[choice][0]}   y = {err[choice][1]}   z = {err[choice][2]}")
             errors.append(err[choice])
         else:
             print("Err array is empty.")
     return errors
-
-# def plot_compare_errors(arguments, errors, title: str, var_str: str):
-#     plt.clf()
-#     err_to_plot = errors[:][2]
-#     # err_to_plot = [err[2] for err in errors]  # Wybierz trzecią wartość z każdego błędu
-#     if len(err_to_plot) == 3 and len(arguments) > 3:
-#         arguments = arguments[:3]  # Jeśli err_to_plot ma rozmiar 3, zmniejsz arguments do 3
-#     plt.plot(arguments, err_to_plot)
-#     plt.xlabel(var_str)
-#     plt.ylabel('Wartość błędu')
-#     plt.title(title)
-#     # plt.ylim(0, 50)
-#     script_dir = os.path.dirname(__file__)
-#     results_dir = os.path.join(script_dir, 'results/')
-#     file_name = f"{title.replace(' ', '_')}.png"
-#     if not os.path.isdir(results_dir):
-#         os.makedirs(results_dir)
-#     plt.savefig(os.path.join(results_dir, file_name))

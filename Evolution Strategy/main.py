@@ -20,13 +20,11 @@ bounds = [(0, 2, 0, 2), (-2, 0, 0, 2), (-2, 0, -2, 0), (0, 2, -2, 0)]
 
 best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, mutation_sigma, bounds, -1)
 utils.print_results(best_individuals, best_individuals_fitness, "Minimum", local_minima)
-# for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_individuals_fitness), 1):
-#     print(f"Minimum {i}: {best_individual}   with value: {best_fitness}")
+
 
 best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, mutation_sigma, bounds, 1)
 utils.print_results(best_individuals, best_individuals_fitness, "Maksimum", local_maxima)
-# for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_individuals_fitness), 1):
-#     print(f"Maksimum {i}: {best_individual}   with value: {best_fitness}")
+
 
 bounds = [(-3, 3, -3, 3)]
 print("\n")
@@ -42,9 +40,6 @@ for sigma in mutation_sigma_list:
     mutated_population_value.append(best_individuals_fitness)
     print(f"\nResults for sigma = {sigma}:")
     errors_mut.append(utils.print_results(best_individuals, best_individuals_fitness, "Minimum", local_minima))
-
-# utils.plot_compare_errors(mutation_sigma_list, errors_mut, "Błąd w zależności od mutacji", "sigma")
-
 
 
 print("\n")
@@ -66,31 +61,9 @@ mu = 128
 lambda_ = 512
 num_generations = 1000
 mutation_sigma = 3
-err = np.zeros((2,3))
-sum_ = np.zeros(2)
 
-
+print("Start point (10,10) with eldery + random selection")
 bounds = [(10, 10, 10, 10)]
-best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, mutation_sigma, bounds, -1)
-for i, (best_individual, best_fitness) in enumerate(zip(best_individuals, best_individuals_fitness), 1):
-    print(f"Minimum {i}: {best_individual}   with value: {best_fitness}")
-    for j in range(2):
-        err[j][0] += best_individual[0] - local_minima[j][0]
-        err[j][1] += best_individual[1] - local_minima[j][1]
-        err[j][2] += best_fitness - local_minima[j][2]
-        sum_[j] = sum(abs(err[j][k]) for k in range(3))
-    if len(err) > 0:  # Sprawdzenie, czy tablica err nie jest pusta
-        choice = int(sum_[0] > sum_[1])
-        print(f"Error x = {err[choice][0]}   y = {err[choice][1]}   z = {err[choice][2]}")
-    else:
-        print("Err is empty.")
+best_individuals, best_individuals_fitness = utils.execute_strategy(objective_function, mu, lambda_, num_generations, mutation_sigma, bounds, -2)
+utils.print_results(best_individuals, best_individuals_fitness, "Minimum", local_minima)
 
-    
-    
-
-
-
-
-#print(mu_and_lambda_population_value)
-
-# dla mu, lambda = 128,512, sigma=1 ustawic punkt na 10,10
