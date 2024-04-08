@@ -66,7 +66,7 @@ class NinjaAgent:
 
 
 class MinMaxAgent:
-    def __init__(self, max_depth=5):
+    def __init__(self, max_depth=15):
         self.numbers = []
         self.max_depth = max_depth
     
@@ -81,8 +81,16 @@ class MinMaxAgent:
         return vector[1:]
 
     def minimax(self, currentVector, moves, player, depth = 0):
-        if len(currentVector) == 0 or depth - self.max_depth == 0:
+        if len(currentVector) == 1:
+            if player == 1:
+                moves = (moves[0] + currentVector[0], moves[1])   
+            else:
+                moves = (moves[0], moves[1] + currentVector[0])
+            return [(moves[0], moves[1])]
+             
+        if depth - self.max_depth == 0:
             return [(moves[0], moves[1])] # wektor przechowije sumę punktów odpowiednio dla gracza 1 i 2
+        
 
         if player == 1:
             return self.minimax(currentVector[1:], (moves[0] + currentVector[0], moves[1]), 2, depth+1) + \
@@ -92,14 +100,31 @@ class MinMaxAgent:
                    self.minimax(currentVector[:-1], (moves[0], moves[1] + currentVector[-1]), 1, depth+1)
         
     def find_best_move(self, input_list: list):
-        all_moves = [input_list[i*2] for i in range(len(input_list)//2)]
-        whoWin = [1 if i[0]>i[1] else 0 for i in all_moves] # przypisanie 1 jeśli wygrał player nr 1
+        whoWin = [1 if i[0]>i[1] else 0 for i in input_list] # przypisanie 1 jeśli wygrał player nr 1
 
         sum1 = sum(whoWin[:len(whoWin)//2])
         sum2 = sum(whoWin[len(whoWin)//2:])
         # wybierany jest prawa lub lewa strona w zależności od tego po której stronie jest więcej zwycięstw
-        moveRight = True if sum1<sum2 else False
+        moveRight = True if sum1<=sum2 else False
         return moveRight
+    
+    def najdluzszy_ciag_jedynek(self, wektor):
+        max_dlugosc = 0
+        aktualna_dlugosc = 0
+        indeks_poczatkowy = -1
+
+        for i, liczba in enumerate(wektor):
+            if liczba == 1:
+                aktualna_dlugosc += 1
+                if aktualna_dlugosc == 2:  # Wielokrotność 1 1
+                    indeks_poczatkowy = i - 1
+            else:
+                aktualna_dlugosc = 0
+            
+            max_dlugosc = max(max_dlugosc, aktualna_dlugosc)
+
+        # return max_dlugosc, indeks_poczatkowy
+        return max_dlugosc
 
     
 def run_game(vector, first_agent, second_agent):
