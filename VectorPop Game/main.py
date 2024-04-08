@@ -1,6 +1,6 @@
 import random
 
-# random.seed(3)  # TODO: For final results set seed as your student's id modulo 42
+random.seed(304260%42)  # TODO: For final results set seed as your student's id modulo 42
 
 
 class RandomAgent:
@@ -66,16 +66,42 @@ class NinjaAgent:
 
 
 class MinMaxAgent:
-    def __init__(self, max_depth=50):
+    def __init__(self, max_depth=5):
         self.numbers = []
         self.max_depth = max_depth
-
+    
     def act(self, vector: list):
-        raise NotImplementedError()
+        analyzed_results = self.minimax(vector, (0, 0), 1) # otrzymujemy wektor ze wszystkimi możliwościami rozgrywki
+        moveRight = self.find_best_move(analyzed_results) 
 
+        if(moveRight):
+            self.numbers.append(vector[-1])
+            return vector[:-1]
+        self.numbers.append(vector[0])
+        return vector[1:]
 
+    def minimax(self, currentVector, moves, player, depth = 0):
+        if len(currentVector) == 0 or depth - self.max_depth == 0:
+            return [(moves[0], moves[1])] # wektor przechowije sumę punktów odpowiednio dla gracza 1 i 2
 
+        if player == 1:
+            return self.minimax(currentVector[1:], (moves[0] + currentVector[0], moves[1]), 2, depth+1) + \
+                   self.minimax(currentVector[:-1], (moves[0] + currentVector[-1], moves[1]), 2, depth+1) 
+        else:
+            return self.minimax(currentVector[1:], (moves[0], moves[1] + currentVector[0]), 1, depth+1) + \
+                   self.minimax(currentVector[:-1], (moves[0], moves[1] + currentVector[-1]), 1, depth+1)
+        
+    def find_best_move(self, input_list: list):
+        all_moves = [input_list[i*2] for i in range(len(input_list)//2)]
+        whoWin = [1 if i[0]>i[1] else 0 for i in all_moves] # przypisanie 1 jeśli wygrał player nr 1
 
+        sum1 = sum(whoWin[:len(whoWin)//2])
+        sum2 = sum(whoWin[len(whoWin)//2:])
+        # wybierany jest prawa lub lewa strona w zależności od tego po której stronie jest więcej zwycięstw
+        moveRight = True if sum1<sum2 else False
+        return moveRight
+
+    
 def run_game(vector, first_agent, second_agent):
     while len(vector) > 0:
         vector = first_agent.act(vector)
@@ -86,7 +112,7 @@ def run_game(vector, first_agent, second_agent):
 def main():
     vector = [random.randint(-10, 10) for _ in range(14)]
     print(f"Vector: {vector}")
-    first_agent, second_agent = NinjaAgent(), GreedyAgent()
+    first_agent, second_agent = MinMaxAgent(), GreedyAgent()
     run_game(vector, first_agent, second_agent)
 
     print(f"First agent: {sum(first_agent.numbers)} Second agent: {sum(second_agent.numbers)}\n"
